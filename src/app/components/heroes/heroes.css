@@ -1,0 +1,187 @@
+/* Container styling */
+:host {
+  display: block;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 25px;
+  background-color: #2d2d2d;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border: 1px solid #404040;
+}
+
+/* Heroes list */
+.heroes {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px;
+}
+
+.heroes li {
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 2px solid #404040;
+}
+
+.heroes li:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(74, 144, 226, 0.3);
+  border-color: #4a90e2;
+}
+
+/* Link styling */
+.heroes a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  text-decoration: none;
+  color: #e0e0e0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1.1em;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  min-height: 60px;
+}
+
+.heroes a:hover {
+  color: #ffffff;
+  background: linear-gradient(135deg, rgba(74, 144, 226, 0.1), rgba(53, 122, 189, 0.1));
+}
+
+.heroes a:focus {
+  outline: none;
+  background: linear-gradient(135deg, rgba(74, 144, 226, 0.2), rgba(53, 122, 189, 0.2));
+}
+
+/* Badge styling */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 45px;
+  height: 35px;
+  font-size: 0.9em;
+  font-weight: bold;
+  color: #ffffff;
+  background: linear-gradient(135deg, #4a90e2, #357abd);
+  border-radius: 6px;
+  margin-right: 15px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.4);
+  letter-spacing: 0.3px;
+}
+
+/* Hero name */
+.heroes a span:not(.badge) {
+  flex: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Active/selected state */
+.heroes li.selected {
+  border-color: #4a90e2;
+  background-color: #242424;
+}
+
+.heroes li.selected a {
+  color: #ffffff;
+  background: linear-gradient(135deg, rgba(74, 144, 226, 0.15), rgba(53, 122, 189, 0.15));
+}
+
+/* Loading state */
+.loading {
+  text-align: center;
+  color: #888888;
+  font-style: italic;
+  padding: 40px;
+  font-size: 1.1em;
+}
+
+/* Empty state */
+.no-heroes {
+  text-align: center;
+  color: #888888;
+  padding: 40px;
+  font-size: 1.1em;
+}
+
+.no-heroes::before {
+  content: '🦸‍♂️';
+  display: block;
+  font-size: 3em;
+  margin-bottom: 15px;
+  opacity: 0.5;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  :host {
+    margin: 10px;
+    padding: 20px;
+  }
+
+  .heroes {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .heroes a {
+    padding: 12px 15px;
+    font-size: 1em;
+    min-height: 50px;
+  }
+
+  .badge {
+    min-width: 35px;
+    height: 30px;
+    font-size: 0.8em;
+    margin-right: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  :host {
+    margin: 5px;
+    padding: 15px;
+  }
+
+  .heroes a {
+    padding: 10px 12px;
+    min-height: 45px;
+  }
+
+  .badge {
+    min-width: 30px;
+    height: 25px;
+    font-size: 0.75em;
+    margin-right: 10px;
+  }
+}
+
+/* Animation for new items */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.heroes li {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+/* Scroll behavior */
+.heroes {
+  scroll-behavior: smooth;
+}

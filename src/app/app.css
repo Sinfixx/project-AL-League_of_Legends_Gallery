@@ -1,0 +1,286 @@
+/* Global reset and container */
+:host {
+  display: block;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+  color: #e0e0e0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow-x: hidden; /* Block horizontal scroll */
+  padding: 0;
+  margin: 0;
+}
+
+/* Prevent horizontal overflow globally */
+* {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+/* Main title */
+h1 {
+  color: #ffffff;
+  font-size: 3.5em;
+  font-weight: 200;
+  text-align: center;
+  margin: 0;
+  padding: 40px 20px 20px;
+  background: linear-gradient(135deg, #4a90e2, #357abd, #2a5f8f);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  position: relative;
+}
+
+h1::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 3px;
+  background: linear-gradient(135deg, #4a90e2, #357abd);
+  border-radius: 2px;
+}
+
+/* Navigation */
+nav {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 30px 20px 40px;
+  margin-bottom: 20px;
+  background: rgba(45, 45, 45, 0.3);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #404040;
+}
+
+nav a {
+  display: inline-flex;
+  align-items: center;
+  padding: 15px 30px;
+  background: linear-gradient(135deg, #2d2d2d, #3d3d3d);
+  color: #e0e0e0;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 1.1em;
+  font-weight: 500;
+  border: 2px solid #404040;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+}
+
+nav a::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(74, 144, 226, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+nav a:hover::before {
+  left: 100%;
+}
+
+nav a:hover {
+  color: #ffffff;
+  border-color: #4a90e2;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(74, 144, 226, 0.3);
+  background: linear-gradient(135deg, #3d3d3d, #4d4d4d);
+}
+
+nav a:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 15px rgba(74, 144, 226, 0.5);
+}
+
+/* Active navigation link */
+nav a.active,
+nav a[aria-current='page'] {
+  background: linear-gradient(135deg, #4a90e2, #357abd);
+  color: #ffffff;
+  border-color: #58a6ff;
+  box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4);
+}
+
+nav a.active:hover {
+  background: linear-gradient(135deg, #357abd, #2a5f8f);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(74, 144, 226, 0.5);
+}
+
+/* Main content area */
+router-outlet {
+  display: block;
+  width: 100%;
+  overflow-x: hidden; /* Prevent horizontal overflow */
+}
+
+/* Content wrapper for consistent spacing */
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  overflow-x: hidden;
+}
+
+/* Messages component positioning */
+app-messages {
+  display: block;
+  margin-top: auto;
+  width: 100%;
+}
+
+/* Ensure no horizontal scroll on any child */
+router-outlet > * {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Loading state */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  color: #888888;
+  font-size: 1.2em;
+}
+
+.loading::before {
+  content: '⚡';
+  font-size: 4em;
+  margin-bottom: 20px;
+  animation: pulse 2s infinite;
+}
+
+/* Error state */
+.error {
+  text-align: center;
+  color: #e74c3c;
+  padding: 40px;
+  font-size: 1.1em;
+}
+
+.error::before {
+  content: '⚠️';
+  display: block;
+  font-size: 3em;
+  margin-bottom: 20px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2.5em;
+    padding: 30px 15px 15px;
+    letter-spacing: 1px;
+  }
+
+  nav {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 25px 15px 35px;
+  }
+
+  nav a {
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+    padding: 12px 25px;
+    font-size: 1em;
+  }
+
+  main {
+    padding: 0 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 2em;
+    padding: 25px 10px 10px;
+  }
+
+  nav {
+    padding: 20px 10px 30px;
+  }
+
+  nav a {
+    padding: 10px 20px;
+    font-size: 0.9em;
+  }
+
+  main {
+    padding: 0 10px;
+  }
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Animations */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Page transitions */
+router-outlet > * {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Utility classes */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

@@ -1,0 +1,203 @@
+@if (hero) {
+<div class="hero-detail">
+  <h2>{{ hero.name }} Details</h2>
+
+  <div class="hero-info">
+    <div class="info-item"><span>ID:</span> {{ hero.id }}</div>
+    <div class="info-item"><span>Nom:</span> {{ hero.name }}</div>
+  </div>
+
+  <form [formGroup]="heroForm" (ngSubmit)="onSubmit()" class="hero-form">
+    <div class="stats-section">
+      <h3>Caractéristiques (Total: {{ getTotalPoints() }}/40)</h3>
+
+      <div class="points-remaining">
+        Points restants:
+        <span
+          class="points-value"
+          [class.warning]="getRemainingPoints() < 0"
+          [class.success]="getRemainingPoints() === 0 && getTotalPoints() === 40"
+        >
+          {{ getRemainingPoints() }}
+        </span>
+      </div>
+
+      <div class="stats-grid">
+        <!-- Attaque -->
+        <div class="stat-item">
+          <label for="attaque">Attaque:</label>
+          <div class="stat-control">
+            <button
+              type="button"
+              (click)="decrementStat('attaque')"
+              [disabled]="attaqueControl?.value <= 1"
+            >
+              -
+            </button>
+            <input
+              id="attaque"
+              type="number"
+              formControlName="attaque"
+              min="1"
+              max="40"
+              [class.error]="hasError('attaque', 'min') || hasError('attaque', 'max')"
+            />
+            <button
+              type="button"
+              (click)="incrementStat('attaque')"
+              [disabled]="getRemainingPoints() <= 0"
+            >
+              +
+            </button>
+          </div>
+          <div class="stat-bar">
+            <div
+              class="stat-fill"
+              [style.width.%]="((attaqueControl?.value || 0) / 40) * 100"
+            ></div>
+          </div>
+          @if (hasError('attaque', 'min') || hasError('attaque', 'max')) {
+          <div class="field-error">{{ getErrorMessage('attaque') }}</div>
+          }
+        </div>
+
+        <!-- Esquive -->
+        <div class="stat-item">
+          <label for="esquive">Esquive:</label>
+          <div class="stat-control">
+            <button
+              type="button"
+              (click)="decrementStat('esquive')"
+              [disabled]="esquiveControl?.value <= 1"
+            >
+              -
+            </button>
+            <input
+              id="esquive"
+              type="number"
+              formControlName="esquive"
+              min="1"
+              max="40"
+              [class.error]="hasError('esquive', 'min') || hasError('esquive', 'max')"
+            />
+            <button
+              type="button"
+              (click)="incrementStat('esquive')"
+              [disabled]="getRemainingPoints() <= 0"
+            >
+              +
+            </button>
+          </div>
+          <div class="stat-bar">
+            <div
+              class="stat-fill"
+              [style.width.%]="((esquiveControl?.value || 0) / 40) * 100"
+            ></div>
+          </div>
+          @if (hasError('esquive', 'min') || hasError('esquive', 'max')) {
+          <div class="field-error">{{ getErrorMessage('esquive') }}</div>
+          }
+        </div>
+
+        <!-- Dégâts -->
+        <div class="stat-item">
+          <label for="degats">Dégâts:</label>
+          <div class="stat-control">
+            <button
+              type="button"
+              (click)="decrementStat('degats')"
+              [disabled]="degatsControl?.value <= 1"
+            >
+              -
+            </button>
+            <input
+              id="degats"
+              type="number"
+              formControlName="degats"
+              min="1"
+              max="40"
+              [class.error]="hasError('degats', 'min') || hasError('degats', 'max')"
+            />
+            <button
+              type="button"
+              (click)="incrementStat('degats')"
+              [disabled]="getRemainingPoints() <= 0"
+            >
+              +
+            </button>
+          </div>
+          <div class="stat-bar">
+            <div class="stat-fill" [style.width.%]="((degatsControl?.value || 0) / 40) * 100"></div>
+          </div>
+          @if (hasError('degats', 'min') || hasError('degats', 'max')) {
+          <div class="field-error">{{ getErrorMessage('degats') }}</div>
+          }
+        </div>
+
+        <!-- Points de vie -->
+        <div class="stat-item">
+          <label for="pv">Points de vie:</label>
+          <div class="stat-control">
+            <button type="button" (click)="decrementStat('pv')" [disabled]="pvControl?.value <= 1">
+              -
+            </button>
+            <input
+              id="pv"
+              type="number"
+              formControlName="pv"
+              min="1"
+              max="40"
+              [class.error]="hasError('pv', 'min') || hasError('pv', 'max')"
+            />
+            <button
+              type="button"
+              (click)="incrementStat('pv')"
+              [disabled]="getRemainingPoints() <= 0"
+            >
+              +
+            </button>
+          </div>
+          <div class="stat-bar">
+            <div class="stat-fill" [style.width.%]="((pvControl?.value || 0) / 40) * 100"></div>
+          </div>
+          @if (hasError('pv', 'min') || hasError('pv', 'max')) {
+          <div class="field-error">{{ getErrorMessage('pv') }}</div>
+          }
+        </div>
+      </div>
+
+      <!-- Édition du nom -->
+      <div class="name-edit">
+        <label for="name">Nom du héros:</label>
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          placeholder="Nom du héros"
+          [class.error]="hasError('name', 'required') || hasError('name', 'minlength')"
+        />
+        @if (hasError('name', 'required') || hasError('name', 'minlength')) {
+        <div class="field-error">{{ getErrorMessage('name') }}</div>
+        }
+      </div>
+
+      <!-- Message d'erreur global -->
+      @if (heroForm.hasError('totalExceeded')) {
+      <div class="error-message">
+        ⚠️ Le total des caractéristiques ne peut pas dépasser 40 points ! (Actuel:
+        {{ heroForm.errors?.['totalExceeded']?.actual }})
+      </div>
+      }
+
+      <!-- Actions -->
+      <div class="actions">
+        <button type="button" (click)="resetStats()" class="reset-btn">Réinitialiser</button>
+        <button type="submit" [disabled]="heroForm.invalid" class="save-btn">
+          Sauvegarder & Retour
+        </button>
+        <button type="button" (click)="goBack()" class="back-btn">Retour</button>
+      </div>
+    </div>
+  </form>
+</div>
+}

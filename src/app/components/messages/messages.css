@@ -1,0 +1,231 @@
+/* Container styling - full width */
+:host {
+  display: block;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-top: 40px;
+  background-color: #1a1a1a;
+  border-top: 3px solid #4a90e2;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  min-height: 200px;
+}
+
+/* Messages container */
+div {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 25px;
+}
+
+/* Messages title */
+h2 {
+  color: #4a90e2;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 300;
+  font-size: 1.8em;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+h2::before {
+  content: '📋';
+  font-size: 1.2em;
+}
+
+/* Clear button */
+.clear {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 0.9em;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 10px rgba(231, 76, 60, 0.3);
+}
+
+.clear:hover {
+  background: linear-gradient(135deg, #c0392b, #a93226);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+}
+
+.clear:active {
+  transform: translateY(0);
+}
+
+/* Messages log container */
+.messages-log {
+  background-color: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 15px;
+  max-height: 300px;
+  overflow-y: auto;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Individual message styling */
+div div {
+  color: #e6edf3;
+  padding: 8px 12px;
+  margin: 5px 0;
+  background-color: #161b22;
+  border-left: 4px solid #4a90e2;
+  border-radius: 4px;
+  font-size: 0.9em;
+  line-height: 1.4;
+  animation: slideInMessage 0.3s ease-out;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+/* Message hover effect */
+div div:hover {
+  background-color: #1c2128;
+  border-left-color: #58a6ff;
+  transform: translateX(5px);
+}
+
+/* Message timestamp effect */
+div div::before {
+  content: attr(data-timestamp);
+  position: absolute;
+  right: 12px;
+  top: 8px;
+  color: #7d8590;
+  font-size: 0.75em;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+div div:hover::before {
+  opacity: 1;
+}
+
+/* Different message types */
+div div:nth-child(odd) {
+  border-left-color: #39d353;
+}
+
+div div:nth-child(even) {
+  border-left-color: #f85149;
+}
+
+div div:contains('Selected') {
+  border-left-color: #a5a5a5;
+}
+
+div div:contains('fetched') {
+  border-left-color: #58a6ff;
+}
+
+/* Scrollbar styling */
+.messages-log::-webkit-scrollbar {
+  width: 8px;
+}
+
+.messages-log::-webkit-scrollbar-track {
+  background: #0d1117;
+  border-radius: 4px;
+}
+
+.messages-log::-webkit-scrollbar-thumb {
+  background: #4a90e2;
+  border-radius: 4px;
+}
+
+.messages-log::-webkit-scrollbar-thumb:hover {
+  background: #58a6ff;
+}
+
+/* Empty state */
+.no-messages {
+  text-align: center;
+  color: #7d8590;
+  padding: 40px;
+  font-style: italic;
+}
+
+.no-messages::before {
+  content: '💬';
+  display: block;
+  font-size: 3em;
+  margin-bottom: 15px;
+  opacity: 0.5;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  div {
+    padding: 20px 15px;
+  }
+
+  h2 {
+    font-size: 1.5em;
+  }
+
+  .clear {
+    width: 100%;
+    padding: 12px;
+  }
+
+  div div {
+    font-size: 0.8em;
+    padding: 6px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  div {
+    padding: 15px 10px;
+  }
+
+  h2 {
+    font-size: 1.3em;
+  }
+
+  .messages-log {
+    max-height: 200px;
+    padding: 10px;
+  }
+}
+
+/* Animations */
+@keyframes slideInMessage {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Auto-scroll to bottom */
+.messages-log {
+  scroll-behavior: smooth;
+}
+
+/* Loading animation */
+.loading-message {
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
