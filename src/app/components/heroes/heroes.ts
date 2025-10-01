@@ -2,15 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { HeroInterface } from '../../../data/heroInterface';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HeroDetail } from '../hero-detail/hero-detail';
-//import { HEROES } from '../../../data/mock-heroes';
 import { HeroService } from '../../services/hero';
 import { MessageService } from '../../services/message';
 import { RouterOutlet, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-heroes',
-  imports: [FormsModule, HeroDetail, CommonModule, RouterLink],
+  imports: [FormsModule, CommonModule, RouterLink],
   templateUrl: './heroes.html',
   styleUrl: './heroes.css',
 })

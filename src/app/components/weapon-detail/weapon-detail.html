@@ -1,0 +1,213 @@
+@if (weapon) {
+<div class="weapon-detail">
+  <h2>{{ weapon.name }} Details</h2>
+
+  <div class="weapon-info">
+    <div class="info-item"><span>ID:</span> {{ weapon.id }}</div>
+    <div class="info-item"><span>Nom:</span> {{ weapon.name }}</div>
+  </div>
+
+  <form [formGroup]="weaponForm" (ngSubmit)="onSubmit()" class="weapon-form">
+    <div class="stats-section">
+      <h3>Modificateurs de stats (Total: {{ getTotalStats() }})</h3>
+
+      <div class="balance-indicator">
+        <span class="balance-label">Équilibre:</span>
+        <span
+          class="balance-value"
+          [class.balanced]="getTotalStats() === 0"
+          [class.unbalanced]="getTotalStats() !== 0"
+        >
+          {{ getTotalStats() === 0 ? 'Équilibrée ⚖️' : 'Déséquilibrée ⚠️' }}
+        </span>
+      </div>
+
+      <div class="stats-grid">
+        <!-- Attaque -->
+        <div class="stat-item">
+          <label for="attaque">Attaque:</label>
+          <div class="stat-control">
+            <button
+              type="button"
+              (click)="decrementStat('attaque')"
+              [disabled]="attaqueControl?.value <= -5"
+            >
+              -
+            </button>
+            <input
+              id="attaque"
+              type="number"
+              formControlName="attaque"
+              min="-5"
+              max="5"
+              [class.error]="hasError('attaque', 'min') || hasError('attaque', 'max')"
+              [class]="getStatClass(attaqueControl?.value || 0)"
+            />
+            <button
+              type="button"
+              (click)="incrementStat('attaque')"
+              [disabled]="attaqueControl?.value >= 5"
+            >
+              +
+            </button>
+          </div>
+          <div class="stat-bar">
+            <div
+              class="stat-fill"
+              [style.width.%]="getStatBarWidth(attaqueControl?.value)"
+              [class]="getStatClass(attaqueControl?.value || 0)"
+            ></div>
+          </div>
+          @if (hasError('attaque', 'min') || hasError('attaque', 'max')) {
+          <div class="field-error">{{ getErrorMessage('attaque') }}</div>
+          }
+        </div>
+
+        <!-- Esquive -->
+        <div class="stat-item">
+          <label for="esquive">Esquive:</label>
+          <div class="stat-control">
+            <button
+              type="button"
+              (click)="decrementStat('esquive')"
+              [disabled]="esquiveControl?.value <= -5"
+            >
+              -
+            </button>
+            <input
+              id="esquive"
+              type="number"
+              formControlName="esquive"
+              min="-5"
+              max="5"
+              [class.error]="hasError('esquive', 'min') || hasError('esquive', 'max')"
+              [class]="getStatClass(esquiveControl?.value || 0)"
+            />
+            <button
+              type="button"
+              (click)="incrementStat('esquive')"
+              [disabled]="esquiveControl?.value >= 5"
+            >
+              +
+            </button>
+          </div>
+          <div class="stat-bar">
+            <div
+              class="stat-fill"
+              [style.width.%]="getStatBarWidth(esquiveControl?.value)"
+              [class]="getStatClass(esquiveControl?.value || 0)"
+            ></div>
+          </div>
+          @if (hasError('esquive', 'min') || hasError('esquive', 'max')) {
+          <div class="field-error">{{ getErrorMessage('esquive') }}</div>
+          }
+        </div>
+
+        <!-- Dégâts -->
+        <div class="stat-item">
+          <label for="degats">Dégâts:</label>
+          <div class="stat-control">
+            <button
+              type="button"
+              (click)="decrementStat('degats')"
+              [disabled]="degatsControl?.value <= -5"
+            >
+              -
+            </button>
+            <input
+              id="degats"
+              type="number"
+              formControlName="degats"
+              min="-5"
+              max="5"
+              [class.error]="hasError('degats', 'min') || hasError('degats', 'max')"
+              [class]="getStatClass(degatsControl?.value || 0)"
+            />
+            <button
+              type="button"
+              (click)="incrementStat('degats')"
+              [disabled]="degatsControl?.value >= 5"
+            >
+              +
+            </button>
+          </div>
+          <div class="stat-bar">
+            <div
+              class="stat-fill"
+              [style.width.%]="getStatBarWidth(degatsControl?.value)"
+              [class]="getStatClass(degatsControl?.value || 0)"
+            ></div>
+          </div>
+          @if (hasError('degats', 'min') || hasError('degats', 'max')) {
+          <div class="field-error">{{ getErrorMessage('degats') }}</div>
+          }
+        </div>
+
+        <!-- Points de vie -->
+        <div class="stat-item">
+          <label for="pv">Points de vie:</label>
+          <div class="stat-control">
+            <button type="button" (click)="decrementStat('pv')" [disabled]="pvControl?.value <= -5">
+              -
+            </button>
+            <input
+              id="pv"
+              type="number"
+              formControlName="pv"
+              min="-5"
+              max="5"
+              [class.error]="hasError('pv', 'min') || hasError('pv', 'max')"
+              [class]="getStatClass(pvControl?.value || 0)"
+            />
+            <button type="button" (click)="incrementStat('pv')" [disabled]="pvControl?.value >= 5">
+              +
+            </button>
+          </div>
+          <div class="stat-bar">
+            <div
+              class="stat-fill"
+              [style.width.%]="getStatBarWidth(pvControl?.value)"
+              [class]="getStatClass(pvControl?.value || 0)"
+            ></div>
+          </div>
+          @if (hasError('pv', 'min') || hasError('pv', 'max')) {
+          <div class="field-error">{{ getErrorMessage('pv') }}</div>
+          }
+        </div>
+      </div>
+
+      <!-- Édition du nom -->
+      <div class="name-edit">
+        <label for="name">Nom de l'arme:</label>
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          placeholder="Nom de l'arme"
+          [class.error]="hasError('name', 'required') || hasError('name', 'minlength')"
+        />
+        @if (hasError('name', 'required') || hasError('name', 'minlength')) {
+        <div class="field-error">{{ getErrorMessage('name') }}</div>
+        }
+      </div>
+
+      <!-- Message d'erreur global -->
+      @if (weaponForm.hasError('totalNotZero')) {
+      <div class="error-message">
+        ⚠️ La somme des modificateurs doit être égale à 0 pour maintenir l'équilibre ! (Actuel:
+        {{ weaponForm.errors?.['totalNotZero']?.actual }})
+      </div>
+      }
+
+      <!-- Actions -->
+      <div class="actions">
+        <button type="button" (click)="resetStats()" class="reset-btn">Réinitialiser</button>
+        <button type="submit" [disabled]="weaponForm.invalid" class="save-btn">
+          Sauvegarder & Retour
+        </button>
+        <button type="button" (click)="goBack()" class="back-btn">Retour</button>
+      </div>
+    </div>
+  </form>
+</div>
+}

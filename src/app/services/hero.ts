@@ -3,6 +3,17 @@ import { HeroInterface } from '../../data/heroInterface';
 import { Observable, of } from 'rxjs';
 import { MessageService } from './message';
 import { HEROES } from '../../data/mock-heroes';
+import {
+  Firestore,
+  addDoc,
+  setDoc,
+  collection,
+  collectionData,
+  deleteDoc,
+  doc,
+  docData,
+  updateDoc,
+} from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root',
@@ -11,47 +22,61 @@ export class HeroService {
   // Map pour stocker les héros modifiés en session
   private modifiedHeroes: Map<number, HeroInterface> = new Map();
 
-  constructor(private messageService: MessageService) {}
+  // URL d'accès aux documents sur Firebase
+  private static url = 'heroes';
 
+  constructor(private firestore: Firestore, private messageService: MessageService) {}
   getHeroes(): Observable<HeroInterface[]> {
-    const heroes: Observable<HeroInterface[]> = new Observable((observer) => {
-      // Mélanger les héros originaux avec les modifications
-      const updatedHeroes = HEROES.map((hero) => {
-        const modifiedHero = this.modifiedHeroes.get(hero.id);
-        return modifiedHero || hero;
-      });
+    // get a reference to the hero collection
+    const heroCollection = collection(this.firestore, HeroService.url);
+    ///////////
+    // Solution 1 : Transformation en une liste d'objets "prototype" de type Hero
+    // get documents (data) from the collection using collectionData
+    return collectionData(heroCollection, { idField: 'id' }) as Observable<HeroInterface[]>;
+  }
 
-      observer.next(updatedHeroes.slice(0, 2));
-      setTimeout(() => {
-        observer.next(updatedHeroes);
-        observer.complete();
-      }, 300);
+  getHero(id: string): Observable<HeroInterface> {
+    // Récupération du DocumentReference
+    const heroDocument = doc(this.firestore, HeroService.url + '/' + id);
+    ///////////
+    // Solution 1 : Transformation en un objet "prototype" de type Hero // get documents (data) from the collection using collectionData
+    return docData(heroDocument, { idField: 'id' }) as Observable<HeroInterface>;
+  }
+
+  deleteHero(id: string): Promise<void> {
+    // Récupération du DocumentReference
+    const heroDocument = doc(this.firestore, HeroService.url + '/' + id);
+    //
+    return deleteDoc(heroDocument);
+  }
+
+  addHero(hero: HeroInterface): Promise<void> {
+    // Utiliser l'ID du héros comme identifiant de document
+    const heroDoc = doc(this.firestore, HeroService.url, hero.id.toString());
+
+    // Créer le document avec l'ID spécifié
+    return setDoc(heroDoc, {
+      name: hero.name,
+      attaque: hero.attaque,
+      esquive: hero.esquive,
+      degats: hero.degats,
+      pv: hero.pv,
+    }).then(() => {
+      this.messageService.add(`HeroService: added hero id=${hero.id}`);
     });
-    this.messageService.add('HeroService: fetched heroes');
-    return heroes;
   }
 
-  getHero(id: number): Observable<HeroInterface> {
-    // Vérifier s'il y a une version modifiée
-    const modifiedHero = this.modifiedHeroes.get(id);
-    if (modifiedHero) {
-      this.messageService.add(`HeroService: fetched modified hero id=${id}`);
-      return of({ ...modifiedHero });
-    }
-
-    // Sinon retourner l'original
-    const hero = HEROES.find((h) => h.id === id);
-    if (hero) {
-      this.messageService.add(`HeroService: fetched hero id=${id}`);
-      return of({ ...hero });
-    }
-
-    return of({} as HeroInterface);
-  }
-
-  // Sauvegarder les modifications en session
   updateHero(hero: HeroInterface): void {
-    this.modifiedHeroes.set(hero.id, { ...hero });
-    this.messageService.add(`HeroService: saved hero id=${hero.id} in session`);
+    // Récupération du DocumentReference
+    const heroDocument = doc(this.firestore, HeroService.url + '/' + hero.id);
+    // Update du document à partir du JSON et du documentReference
+    let newHeroJSON = {
+      name: hero.name,
+      attaque: hero.attaque,
+      esquive: hero.esquive,
+      degats: hero.degats,
+      pv: hero.pv,
+    };
+    updateDoc(heroDocument, newHeroJSON);
   }
 }
