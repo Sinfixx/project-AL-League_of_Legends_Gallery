@@ -185,3 +185,25 @@
 .heroes {
   scroll-behavior: smooth;
 }
+
+/* Select styling */
+select {
+  background-color: #1a1a1a;
+  color: #e0e0e0;
+  border: 1px solid #404040;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 1em;
+  margin-left: 10px;
+  transition: all 0.3s ease;
+}
+
+select:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+}
+
+select:hover {
+  border-color: #4a90e2;
+}
