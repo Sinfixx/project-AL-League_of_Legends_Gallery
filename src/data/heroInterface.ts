@@ -5,4 +5,5 @@ export interface HeroInterface {
   esquive: number;
   degats: number;
   pv: number;
+  weapon?: string;
 }

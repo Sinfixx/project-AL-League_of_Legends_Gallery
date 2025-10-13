@@ -366,4 +366,160 @@ input.error {
   overflow-x: auto;
 }
 
-/* ...rest of existing styles... */
+/* Ajoutez ces styles au fichier hero-detail.css existant */
+
+/* Weapon selection section */
+.weapon-selection {
+  background-color: #1e1e1e;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  border-left: 4px solid #8d00c5;
+}
+
+.weapon-selection h4 {
+  color: #8d00c5;
+  margin-bottom: 15px;
+  font-size: 1.2em;
+}
+
+.weapon-control {
+  margin-bottom: 15px;
+}
+
+.weapon-control label {
+  display: block;
+  color: #8d00c5;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.weapon-control select {
+  width: 100%;
+  max-width: 500px;
+  padding: 12px 15px;
+  font-size: 1em;
+  background-color: #0a0a0a;
+  color: #ffffff;
+  border: 2px solid #555555;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.weapon-control select:focus {
+  outline: none;
+  border-color: #8d00c5;
+  box-shadow: 0 0 10px rgba(139, 0, 173, 0.4);
+}
+
+.weapon-control select.error {
+  border-color: #e74c3c;
+  box-shadow: 0 0 8px rgba(231, 76, 60, 0.4);
+}
+
+.weapon-control select option:disabled {
+  color: #666666;
+  background-color: #2a2a2a;
+}
+
+/* Weapon error message */
+.weapon-error {
+  background-color: #e74c3c;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 6px;
+  margin-top: 10px;
+  font-weight: 500;
+  animation: shake 0.5s ease-in-out;
+}
+
+/* Weapon preview */
+.weapon-preview {
+  background-color: #0a0a0a;
+  padding: 15px;
+  border-radius: 6px;
+  margin-top: 15px;
+  border: 1px solid #404040;
+}
+
+.weapon-preview h5 {
+  color: #4a90e2;
+  margin-bottom: 10px;
+  font-size: 1em;
+}
+
+.stats-comparison {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.stat-compare {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.9em;
+  padding: 5px;
+  background-color: #1a1a1a;
+  border-radius: 4px;
+}
+
+.base-stat {
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.modifier {
+  font-weight: bold;
+  font-size: 0.8em;
+}
+
+.modifier.positive {
+  color: #27ae60;
+}
+
+.modifier.negative {
+  color: #e74c3c;
+}
+
+.final-stat {
+  color: #4a90e2;
+  font-weight: bold;
+}
+
+.final-stat.invalid {
+  color: #e74c3c;
+  background-color: rgba(231, 76, 60, 0.1);
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+/* Weapon equipped indicator */
+.weapon-equipped {
+  color: #8d00c5 !important;
+  font-weight: 600;
+}
+
+.weapon-equipped span {
+  color: #8d00c5 !important;
+}
+
+/* Save button disabled state */
+.save-btn:disabled {
+  background: #555555;
+  cursor: not-allowed;
+  opacity: 0.5;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .stats-comparison {
+    grid-template-columns: 1fr;
+  }
+
+  .weapon-control select {
+    width: 100%;
+  }
+}

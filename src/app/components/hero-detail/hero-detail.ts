@@ -2,10 +2,12 @@ import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HeroInterface } from '../../../data/heroInterface';
+import { WeaponInterface } from '../../../data/weaponInterface';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { HeroService } from '../../services/hero';
-import { Subscription } from 'rxjs';
+import { WeaponService } from '../../services/weapons';
+import { Subscription, combineLatest } from 'rxjs';
 
 // Validator personnalisé pour la somme totale
 function totalPointsValidator(control: any) {
@@ -29,20 +31,24 @@ function totalPointsValidator(control: any) {
 export class HeroDetail implements OnInit, OnDestroy {
   @Input() hero?: HeroInterface;
   heroForm!: FormGroup;
+  weapons: WeaponInterface[] = [];
+  selectedWeapon?: WeaponInterface;
+  finalStats?: HeroInterface;
   private originalHero?: HeroInterface;
   private formSubscription?: Subscription;
 
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private heroService: HeroService,
+    public heroService: HeroService,
+    private weaponService: WeaponService,
     private location: Location
   ) {
     this.createForm();
   }
 
   ngOnInit(): void {
-    this.getHero();
+    this.loadData();
   }
 
   ngOnDestroy(): void {
@@ -60,6 +66,7 @@ export class HeroDetail implements OnInit, OnDestroy {
         esquive: [1, [Validators.required, Validators.min(1), Validators.max(40)]],
         degats: [1, [Validators.required, Validators.min(1), Validators.max(40)]],
         pv: [1, [Validators.required, Validators.min(1), Validators.max(40)]],
+        weapon: [''], // Ajout du contrôle pour l'arme
       },
       { validators: totalPointsValidator }
     );
@@ -70,17 +77,30 @@ export class HeroDetail implements OnInit, OnDestroy {
     });
   }
 
-  getHero(): void {
+  loadData(): void {
     const id = String(this.route.snapshot.paramMap.get('id'));
-    this.heroService.getHero(id).subscribe((hero) => {
-      this.hero = { ...hero };
-      this.originalHero = { ...hero };
-      this.heroForm.patchValue(hero);
-    });
+
+    // Charger le héros et les armes en parallèle
+    combineLatest([this.heroService.getHero(id), this.weaponService.getWeapons()]).subscribe(
+      ([hero, weapons]) => {
+        this.hero = { ...hero };
+        this.originalHero = { ...hero };
+        this.weapons = weapons;
+
+        this.heroForm.patchValue(hero);
+
+        // Si le héros a une arme, la sélectionner
+        if (hero.weapon) {
+          this.selectedWeapon = this.weapons.find((w) => w.id.toString() === hero.weapon);
+          this.heroForm.patchValue({ weapon: hero.weapon });
+        }
+
+        this.updateFinalStats();
+      }
+    );
   }
 
   onFormChange(): void {
-    // Mettre à jour l'objet hero avec les valeurs du formulaire
     if (this.hero) {
       const formValue = this.heroForm.value;
       this.hero = {
@@ -90,23 +110,69 @@ export class HeroDetail implements OnInit, OnDestroy {
         esquive: formValue.esquive,
         degats: formValue.degats,
         pv: formValue.pv,
+        weapon: formValue.weapon,
       };
+
+      this.updateFinalStats();
     }
   }
 
+  onWeaponChange(): void {
+    const weaponId = this.heroForm.get('weapon')?.value;
+
+    if (weaponId) {
+      this.selectedWeapon = this.weapons.find((w) => w.id.toString() === weaponId);
+    } else {
+      this.selectedWeapon = undefined;
+    }
+
+    this.updateFinalStats();
+  }
+
+  updateFinalStats(): void {
+    if (this.hero) {
+      this.finalStats = this.heroService.calculateFinalStats(
+        this.hero,
+        this.selectedWeapon || null
+      );
+    }
+  }
+
+  canEquipSelectedWeapon(): boolean {
+    if (!this.hero || !this.selectedWeapon) return true;
+    return this.heroService.canEquipWeapon(this.hero, this.selectedWeapon);
+  }
+
+  getEquipmentError(): string {
+    if (!this.hero || !this.selectedWeapon || this.canEquipSelectedWeapon()) return '';
+
+    const newStats = this.heroService.calculateFinalStats(this.hero, this.selectedWeapon);
+    const errors: string[] = [];
+
+    if (newStats.attaque < 1) errors.push(`Attaque (${newStats.attaque})`);
+    if (newStats.esquive < 1) errors.push(`Esquive (${newStats.esquive})`);
+    if (newStats.degats < 1) errors.push(`Dégâts (${newStats.degats})`);
+    if (newStats.pv < 1) errors.push(`PV (${newStats.pv})`);
+
+    return `Cette arme rendrait ces stats < 1: ${errors.join(', ')}`;
+  }
+
   saveHero(): void {
-    if (this.heroForm.valid && this.hero) {
-      // Créer l'objet hero final avec toutes les valeurs
+    if (this.heroForm.valid && this.hero && this.canEquipSelectedWeapon()) {
       const heroToSave: HeroInterface = {
         ...this.hero,
         ...this.heroForm.value,
-        id: this.hero.id, // Préserver l'ID
+        id: this.hero.id,
       };
 
-      // Sauvegarder via le service
       this.heroService.updateHero(heroToSave);
 
-      // Mettre à jour l'objet local
+      // Associer l'arme si elle a changé
+      const weaponId = this.heroForm.get('weapon')?.value || null;
+      if (weaponId !== this.originalHero?.weapon) {
+        this.heroService.associateWeaponToHero(this.hero.id.toString(), weaponId);
+      }
+
       this.hero = heroToSave;
     }
   }
@@ -148,6 +214,8 @@ export class HeroDetail implements OnInit, OnDestroy {
     if (this.originalHero) {
       this.heroForm.patchValue(this.originalHero);
       this.hero = { ...this.originalHero };
+      this.selectedWeapon = this.weapons.find((w) => w.id.toString() === this.originalHero?.weapon);
+      this.updateFinalStats();
     }
   }
 
@@ -171,14 +239,15 @@ export class HeroDetail implements OnInit, OnDestroy {
   get pvControl() {
     return this.heroForm.get('pv');
   }
+  get weaponControl() {
+    return this.heroForm.get('weapon');
+  }
 
-  // Vérifier si un contrôle a une erreur spécifique
   hasError(controlName: string, errorType: string): boolean {
     const control = this.heroForm.get(controlName);
     return !!(control && control.hasError(errorType) && (control.dirty || control.touched));
   }
 
-  // Obtenir le message d'erreur pour un contrôle
   getErrorMessage(controlName: string): string {
     const control = this.heroForm.get(controlName);
     if (!control || !control.errors) return '';

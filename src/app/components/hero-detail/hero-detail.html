@@ -5,6 +5,11 @@
   <div class="hero-info">
     <div class="info-item"><span>ID:</span> {{ hero.id }}</div>
     <div class="info-item"><span>Nom:</span> {{ hero.name }}</div>
+    @if (selectedWeapon) {
+    <div class="info-item weapon-equipped">
+      <span>🗡️ Arme équipée:</span> {{ selectedWeapon.name }}
+    </div>
+    }
   </div>
 
   <form [formGroup]="heroForm" (ngSubmit)="onSubmit()" class="hero-form">
@@ -20,6 +25,90 @@
         >
           {{ getRemainingPoints() }}
         </span>
+      </div>
+
+      <!-- Sélection d'arme -->
+      <div class="weapon-selection">
+        <h4>🗡️ Équipement</h4>
+        <div class="weapon-control">
+          <label for="weapon">Arme:</label>
+          <select
+            id="weapon"
+            formControlName="weapon"
+            (change)="onWeaponChange()"
+            [class.error]="!canEquipSelectedWeapon()"
+          >
+            <option value="">Aucune arme</option>
+            <option
+              *ngFor="let weapon of weapons"
+              [value]="weapon.id"
+              [disabled]="!heroService.canEquipWeapon(hero, weapon)"
+            >
+              {{ weapon.name }}
+              ({{ weapon.attaque >= 0 ? '+' : '' }}{{ weapon.attaque }}/{{
+                weapon.esquive >= 0 ? '+' : ''
+              }}{{ weapon.esquive }}/{{ weapon.degats >= 0 ? '+' : '' }}{{ weapon.degats }}/{{
+                weapon.pv >= 0 ? '+' : ''
+              }}{{ weapon.pv }})
+            </option>
+          </select>
+        </div>
+
+        @if (!canEquipSelectedWeapon()) {
+        <div class="weapon-error">⚠️ {{ getEquipmentError() }}</div>
+        } @if (selectedWeapon) {
+        <div class="weapon-preview">
+          <h5>Aperçu avec {{ selectedWeapon.name }}:</h5>
+          <div class="stats-comparison">
+            <div class="stat-compare">
+              <span>ATQ:</span>
+              <span class="base-stat">{{ hero.attaque }}</span>
+              <span
+                class="modifier"
+                [class]="selectedWeapon.attaque >= 0 ? 'positive' : 'negative'"
+              >
+                {{ selectedWeapon.attaque >= 0 ? '+' : '' }}{{ selectedWeapon.attaque }}
+              </span>
+              <span class="final-stat" [class.invalid]="finalStats!.attaque < 1">
+                = {{ finalStats!.attaque }}
+              </span>
+            </div>
+            <div class="stat-compare">
+              <span>ESQ:</span>
+              <span class="base-stat">{{ hero.esquive }}</span>
+              <span
+                class="modifier"
+                [class]="selectedWeapon.esquive >= 0 ? 'positive' : 'negative'"
+              >
+                {{ selectedWeapon.esquive >= 0 ? '+' : '' }}{{ selectedWeapon.esquive }}
+              </span>
+              <span class="final-stat" [class.invalid]="finalStats!.esquive < 1">
+                = {{ finalStats!.esquive }}
+              </span>
+            </div>
+            <div class="stat-compare">
+              <span>DÉG:</span>
+              <span class="base-stat">{{ hero.degats }}</span>
+              <span class="modifier" [class]="selectedWeapon.degats >= 0 ? 'positive' : 'negative'">
+                {{ selectedWeapon.degats >= 0 ? '+' : '' }}{{ selectedWeapon.degats }}
+              </span>
+              <span class="final-stat" [class.invalid]="finalStats!.degats < 1">
+                = {{ finalStats!.degats }}
+              </span>
+            </div>
+            <div class="stat-compare">
+              <span>PV:</span>
+              <span class="base-stat">{{ hero.pv }}</span>
+              <span class="modifier" [class]="selectedWeapon.pv >= 0 ? 'positive' : 'negative'">
+                {{ selectedWeapon.pv >= 0 ? '+' : '' }}{{ selectedWeapon.pv }}
+              </span>
+              <span class="final-stat" [class.invalid]="finalStats!.pv < 1">
+                = {{ finalStats!.pv }}
+              </span>
+            </div>
+          </div>
+        </div>
+        }
       </div>
 
       <div class="stats-grid">
@@ -192,7 +281,11 @@
       <!-- Actions -->
       <div class="actions">
         <button type="button" (click)="resetStats()" class="reset-btn">Réinitialiser</button>
-        <button type="submit" [disabled]="heroForm.invalid" class="save-btn">
+        <button
+          type="submit"
+          [disabled]="heroForm.invalid || !canEquipSelectedWeapon()"
+          class="save-btn"
+        >
           Sauvegarder & Retour
         </button>
         <button type="button" (click)="goBack()" class="back-btn">Retour</button>

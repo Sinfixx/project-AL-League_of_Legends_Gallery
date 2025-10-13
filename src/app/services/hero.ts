@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HeroInterface } from '../../data/heroInterface';
+import { WeaponInterface } from '../../data/weaponInterface';
 import { Observable, of } from 'rxjs';
 import { MessageService } from './message';
-import { HEROES } from '../../data/mock-heroes';
 import {
   Firestore,
   addDoc,
@@ -26,57 +26,78 @@ export class HeroService {
   private static url = 'heroes';
 
   constructor(private firestore: Firestore, private messageService: MessageService) {}
+
   getHeroes(): Observable<HeroInterface[]> {
-    // get a reference to the hero collection
     const heroCollection = collection(this.firestore, HeroService.url);
-    ///////////
-    // Solution 1 : Transformation en une liste d'objets "prototype" de type Hero
-    // get documents (data) from the collection using collectionData
     return collectionData(heroCollection, { idField: 'id' }) as Observable<HeroInterface[]>;
   }
 
   getHero(id: string): Observable<HeroInterface> {
-    // Récupération du DocumentReference
     const heroDocument = doc(this.firestore, HeroService.url + '/' + id);
-    ///////////
-    // Solution 1 : Transformation en un objet "prototype" de type Hero // get documents (data) from the collection using collectionData
     return docData(heroDocument, { idField: 'id' }) as Observable<HeroInterface>;
   }
 
   deleteHero(id: string): Promise<void> {
-    // Récupération du DocumentReference
     const heroDocument = doc(this.firestore, HeroService.url + '/' + id);
-    //
     return deleteDoc(heroDocument);
   }
 
   addHero(hero: HeroInterface): Promise<void> {
-    // Utiliser l'ID du héros comme identifiant de document
     const heroDoc = doc(this.firestore, HeroService.url, hero.id.toString());
 
-    // Créer le document avec l'ID spécifié
     return setDoc(heroDoc, {
       name: hero.name,
       attaque: hero.attaque,
       esquive: hero.esquive,
       degats: hero.degats,
       pv: hero.pv,
+      weapon: hero.weapon || null,
     }).then(() => {
       this.messageService.add(`HeroService: added hero id=${hero.id}`);
     });
   }
 
+  associateWeaponToHero(heroId: string, weaponId: string | null): Promise<void> {
+    const heroDocument = doc(this.firestore, HeroService.url + '/' + heroId);
+
+    return updateDoc(heroDocument, { weapon: weaponId }).then(() => {
+      this.messageService.add(`HeroService: associated weapon ${weaponId} to hero id=${heroId}`);
+    });
+  }
+
   updateHero(hero: HeroInterface): void {
-    // Récupération du DocumentReference
     const heroDocument = doc(this.firestore, HeroService.url + '/' + hero.id);
-    // Update du document à partir du JSON et du documentReference
     let newHeroJSON = {
       name: hero.name,
       attaque: hero.attaque,
       esquive: hero.esquive,
       degats: hero.degats,
       pv: hero.pv,
+      weapon: hero.weapon || null,
     };
     updateDoc(heroDocument, newHeroJSON);
+  }
+
+  // Méthode pour valider si une arme peut être équipée
+  canEquipWeapon(hero: HeroInterface, weapon: WeaponInterface): boolean {
+    const newAttaque = hero.attaque + weapon.attaque;
+    const newEsquive = hero.esquive + weapon.esquive;
+    const newDegats = hero.degats + weapon.degats;
+    const newPv = hero.pv + weapon.pv;
+
+    return newAttaque >= 1 && newEsquive >= 1 && newDegats >= 1 && newPv >= 1;
+  }
+
+  // Méthode pour calculer les stats finales avec une arme
+  calculateFinalStats(hero: HeroInterface, weapon: WeaponInterface | null): HeroInterface {
+    if (!weapon) return hero;
+
+    return {
+      ...hero,
+      attaque: hero.attaque + weapon.attaque,
+      esquive: hero.esquive + weapon.esquive,
+      degats: hero.degats + weapon.degats,
+      pv: hero.pv + weapon.pv,
+    };
   }
 }

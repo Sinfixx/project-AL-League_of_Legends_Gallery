@@ -9,5 +9,5 @@ import { Messages } from './components/messages/messages';
   styleUrl: './app.css',
 })
 export class App {
-  protected readonly title = 'Heroes Galery';
+  protected readonly title = 'Gallerie des Champions';
 }
