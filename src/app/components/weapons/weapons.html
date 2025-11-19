@@ -1,3 +1,10 @@
+<div class="weapons-header">
+  <h2>Liste des armes</h2>
+  <a routerLink="/weapons/new" class="create-weapon-btn">
+    <span class="icon">+</span> Nouvelle arme
+  </a>
+</div>
+
 <ul class="weapons">
   <li *ngFor="let weapon of weapons">
     <a routerLink="/weapon/{{ weapon.id }}">

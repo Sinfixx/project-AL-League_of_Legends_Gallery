@@ -10,6 +10,58 @@
   border: 1px solid #404040;
 }
 
+/* Weapons header */
+.weapons-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #4a90e2;
+}
+
+.weapons-header h2 {
+  color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 300;
+  font-size: 2em;
+  margin: 0;
+}
+
+.create-weapon-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #4a90e2, #357abd);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 1em;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.4);
+}
+
+.create-weapon-btn:hover {
+  background: linear-gradient(135deg, #5ba3f5, #4a90e2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.6);
+}
+
+.create-weapon-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(74, 144, 226, 0.4);
+}
+
+.create-weapon-btn .icon {
+  font-size: 1.3em;
+  font-weight: bold;
+  line-height: 1;
+}
+
 /* Weapons list */
 .weapons {
   margin: 0;
@@ -199,6 +251,21 @@
   :host {
     margin: 15px;
     padding: 20px;
+  }
+
+  .weapons-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .weapons-header h2 {
+    font-size: 1.6em;
+  }
+
+  .create-weapon-btn {
+    width: 100%;
+    justify-content: center;
   }
 
   .weapons a {

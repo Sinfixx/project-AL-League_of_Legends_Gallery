@@ -1,13 +1,42 @@
-@if (weapon) {
-<div class="weapon-detail">
-  <h2>{{ weapon.name }} Details</h2>
-
-  <div class="weapon-info">
-    <div class="info-item"><span>ID:</span> {{ weapon.id }}</div>
-    <div class="info-item"><span>Nom:</span> {{ weapon.name }}</div>
-  </div>
+<div class="weapon-new">
+  <h2>🗡️ Créer une nouvelle arme</h2>
 
   <form [formGroup]="weaponForm" (ngSubmit)="onSubmit()" class="weapon-form">
+    <div class="form-section">
+      <!-- ID -->
+      <div class="form-group">
+        <label for="id">ID de l'arme:</label>
+        <input
+          id="id"
+          type="number"
+          formControlName="id"
+          placeholder="ID unique"
+          min="1"
+          [class.error]="hasError('id', 'required') || hasError('id', 'min') || idWarning"
+        />
+        @if (hasError('id', 'required') || hasError('id', 'min')) {
+        <div class="field-error">{{ getErrorMessage('id') }}</div>
+        } @if (idWarning) {
+        <div class="field-warning">{{ idWarning }}</div>
+        }
+      </div>
+
+      <!-- Nom -->
+      <div class="form-group">
+        <label for="name">Nom de l'arme:</label>
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          placeholder="Ex: Affliction de Liandry"
+          [class.error]="hasError('name', 'required') || hasError('name', 'minlength')"
+        />
+        @if (hasError('name', 'required') || hasError('name', 'minlength')) {
+        <div class="field-error">{{ getErrorMessage('name') }}</div>
+        }
+      </div>
+    </div>
+
     <div class="stats-section">
       <h3>Modificateurs de stats (Total: {{ getTotalStats() }})</h3>
 
@@ -176,21 +205,6 @@
         </div>
       </div>
 
-      <!-- Édition du nom -->
-      <div class="name-edit">
-        <label for="name">Nom de l'arme:</label>
-        <input
-          id="name"
-          type="text"
-          formControlName="name"
-          placeholder="Nom de l'arme"
-          [class.error]="hasError('name', 'required') || hasError('name', 'minlength')"
-        />
-        @if (hasError('name', 'required') || hasError('name', 'minlength')) {
-        <div class="field-error">{{ getErrorMessage('name') }}</div>
-        }
-      </div>
-
       <!-- Message d'erreur global -->
       @if (weaponForm.hasError('totalNotZero')) {
       <div class="error-message">
@@ -201,14 +215,12 @@
 
       <!-- Actions -->
       <div class="actions">
-        <button type="button" (click)="resetStats()" class="reset-btn">Réinitialiser</button>
-        <button type="submit" [disabled]="weaponForm.invalid" class="save-btn">
-          Sauvegarder & Retour
+        <button type="button" (click)="resetStats()" class="reset-btn">Réinitialiser Stats</button>
+        <button type="submit" [disabled]="weaponForm.invalid || idWarning" class="create-btn">
+          Créer l'arme
         </button>
-        <button type="button" (click)="goBack()" class="back-btn">Retour</button>
-        <button type="button" (click)="deleteWeapon()" class="delete-btn">Supprimer</button>
+        <button type="button" (click)="cancel()" class="cancel-btn">Annuler</button>
       </div>
     </div>
   </form>
 </div>
-}

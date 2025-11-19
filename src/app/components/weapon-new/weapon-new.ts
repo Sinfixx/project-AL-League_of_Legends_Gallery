@@ -1,11 +1,9 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { WeaponInterface } from '../../../data/weaponInterface';
-import { ActivatedRoute } from '@angular/router';
-import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 import { WeaponService } from '../../services/weapons';
-import { MessageService } from '../../services/message';
 import { Subscription } from 'rxjs';
 
 // Validator personnalisé pour la somme totale (doit être 0)
@@ -22,29 +20,33 @@ function totalStatsValidator(control: any) {
 }
 
 @Component({
-  selector: 'app-weapon-detail',
+  selector: 'app-weapon-new',
   imports: [ReactiveFormsModule, CommonModule],
-  templateUrl: './weapon-detail.html',
-  styleUrl: './weapon-detail.css',
+  templateUrl: './weapon-new.html',
+  styleUrl: './weapon-new.css',
 })
-export class WeaponDetail implements OnInit, OnDestroy {
-  @Input() weapon?: WeaponInterface;
+export class WeaponNew implements OnInit {
   weaponForm!: FormGroup;
-  private originalWeapon?: WeaponInterface;
+  weapons: WeaponInterface[] = [];
+  existingIds: number[] = [];
+  idWarning: string = '';
   private formSubscription?: Subscription;
 
   constructor(
     private fb: FormBuilder,
-    private route: ActivatedRoute,
     private weaponService: WeaponService,
-    private messageService: MessageService,
-    private location: Location
+    private router: Router
   ) {
     this.createForm();
   }
 
   ngOnInit(): void {
-    this.getWeapon();
+    this.loadWeapons();
+
+    // Surveiller les changements du formulaire
+    this.formSubscription = this.weaponForm.valueChanges.subscribe(() => {
+      this.checkIdExists();
+    });
   }
 
   ngOnDestroy(): void {
@@ -56,7 +58,7 @@ export class WeaponDetail implements OnInit, OnDestroy {
   createForm(): void {
     this.weaponForm = this.fb.group(
       {
-        id: [{ value: 0, disabled: true }],
+        id: [1, [Validators.required, Validators.min(1)]],
         name: ['', [Validators.required, Validators.minLength(2)]],
         attaque: [0, [Validators.required, Validators.min(-5), Validators.max(5)]],
         esquive: [0, [Validators.required, Validators.min(-5), Validators.max(5)]],
@@ -65,57 +67,23 @@ export class WeaponDetail implements OnInit, OnDestroy {
       },
       { validators: totalStatsValidator }
     );
+  }
 
-    // Surveiller les changements du formulaire
-    this.formSubscription = this.weaponForm.valueChanges.subscribe(() => {
-      this.onFormChange();
+  loadWeapons(): void {
+    this.weaponService.getWeapons().subscribe((weapons) => {
+      this.weapons = weapons;
+      this.existingIds = weapons.map((w) => Number(w.id));
+      this.checkIdExists();
     });
   }
 
-  getWeapon(): void {
-    const id = String(this.route.snapshot.paramMap.get('id'));
-    this.weaponService.getWeapon(id).subscribe((weapon) => {
-      this.weapon = { ...weapon };
-      this.originalWeapon = { ...weapon };
-      this.weaponForm.patchValue(weapon);
-    });
-  }
-
-  onFormChange(): void {
-    // Mettre à jour l'objet weapon avec les valeurs du formulaire
-    if (this.weapon) {
-      const formValue = this.weaponForm.value;
-      this.weapon = {
-        ...this.weapon,
-        name: formValue.name,
-        attaque: formValue.attaque,
-        esquive: formValue.esquive,
-        degats: formValue.degats,
-        pv: formValue.pv,
-      };
+  checkIdExists(): void {
+    const id = Number(this.weaponForm.get('id')?.value);
+    if (this.existingIds.includes(id)) {
+      this.idWarning = `⚠️ L'ID ${id} existe déjà. Choisissez un autre ID.`;
+    } else {
+      this.idWarning = '';
     }
-  }
-
-  saveWeapon(): void {
-    if (this.weaponForm.valid && this.weapon) {
-      // Créer l'objet weapon final avec toutes les valeurs
-      const weaponToSave: WeaponInterface = {
-        ...this.weapon,
-        ...this.weaponForm.value,
-        id: this.weapon.id, // Préserver l'ID
-      };
-
-      // Sauvegarder via le service
-      this.weaponService.updateWeapon(weaponToSave);
-
-      // Mettre à jour l'objet local
-      this.weapon = weaponToSave;
-    }
-  }
-
-  onSubmit(): void {
-    this.saveWeapon();
-    this.goBack();
   }
 
   getTotalStats(): number {
@@ -143,36 +111,28 @@ export class WeaponDetail implements OnInit, OnDestroy {
   }
 
   resetStats(): void {
-    if (this.originalWeapon) {
-      this.weaponForm.patchValue(this.originalWeapon);
-      this.weapon = { ...this.originalWeapon };
+    this.weaponForm.patchValue({
+      attaque: 0,
+      esquive: 0,
+      degats: 0,
+      pv: 0,
+    });
+  }
+
+  onSubmit(): void {
+    if (this.weaponForm.valid && !this.idWarning) {
+      const newWeapon: WeaponInterface = {
+        ...this.weaponForm.value,
+      };
+
+      this.weaponService.addWeapon(newWeapon).then(() => {
+        this.router.navigate(['/weapons']);
+      });
     }
   }
 
-  goBack(): void {
-    this.saveWeapon();
-    this.location.back();
-  }
-
-  deleteWeapon(): void {
-    if (!this.weapon) return;
-
-    const confirmDelete = confirm(
-      `⚠️ Êtes-vous sûr de vouloir supprimer définitivement l'arme "${this.weapon.name}" ?\n\nCette action est irréversible !`
-    );
-
-    if (confirmDelete) {
-      this.weaponService
-        .deleteWeapon(this.weapon.id.toString())
-        .then(() => {
-          this.messageService.add(`Arme "${this.weapon!.name}" supprimée avec succès`);
-          this.location.back();
-        })
-        .catch((error) => {
-          console.error('Erreur lors de la suppression:', error);
-          alert("❌ Erreur lors de la suppression de l'arme. Veuillez réessayer.");
-        });
-    }
+  cancel(): void {
+    this.router.navigate(['/weapons']);
   }
 
   getStatBarWidth(value: number): number {
@@ -180,6 +140,9 @@ export class WeaponDetail implements OnInit, OnDestroy {
   }
 
   // Getters pour faciliter l'accès aux contrôles dans le template
+  get idControl() {
+    return this.weaponForm.get('id');
+  }
   get nameControl() {
     return this.weaponForm.get('name');
   }
@@ -196,26 +159,26 @@ export class WeaponDetail implements OnInit, OnDestroy {
     return this.weaponForm.get('pv');
   }
 
-  // Vérifier si un contrôle a une erreur spécifique
   hasError(controlName: string, errorType: string): boolean {
     const control = this.weaponForm.get(controlName);
     return !!(control && control.hasError(errorType) && (control.dirty || control.touched));
   }
 
-  // Obtenir le message d'erreur pour un contrôle
   getErrorMessage(controlName: string): string {
     const control = this.weaponForm.get(controlName);
     if (!control || !control.errors) return '';
 
     if (control.hasError('required')) return `${controlName} est requis`;
-    if (control.hasError('min')) return `${controlName} doit être au minimum -5`;
+    if (control.hasError('min')) {
+      if (controlName === 'id') return "L'ID doit être au minimum 1";
+      return `${controlName} doit être au minimum -5`;
+    }
     if (control.hasError('max')) return `${controlName} ne peut pas dépasser 5`;
     if (control.hasError('minlength')) return 'Le nom doit contenir au moins 2 caractères';
 
     return '';
   }
 
-  // Méthode utilitaire pour obtenir la classe CSS d'une stat
   getStatClass(value: number): string {
     if (value > 0) return 'positive';
     if (value < 0) return 'negative';
