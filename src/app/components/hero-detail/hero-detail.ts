@@ -7,6 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { HeroService } from '../../services/hero';
 import { WeaponService } from '../../services/weapons';
+import { MessageService } from '../../services/message';
 import { Subscription, combineLatest } from 'rxjs';
 
 // Validator personnalisé pour la somme totale
@@ -44,6 +45,7 @@ export class HeroDetail implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     public heroService: HeroService,
     private weaponService: WeaponService,
+    private messageService: MessageService,
     private location: Location
   ) {
     this.createForm();
@@ -227,6 +229,27 @@ export class HeroDetail implements OnInit, OnDestroy {
 
   goBack(): void {
     this.location.back();
+  }
+
+  deleteHero(): void {
+    if (!this.hero) return;
+
+    const confirmDelete = confirm(
+      `Êtes-vous sûr de vouloir supprimer définitivement le champion "${this.hero.name}" ?\n\nCette action est irréversible !`
+    );
+
+    if (confirmDelete) {
+      this.heroService
+        .deleteHero(this.hero.id.toString())
+        .then(() => {
+          this.messageService.add(`Champion "${this.hero!.name}" supprimé avec succès`);
+          this.goBack();
+        })
+        .catch((error) => {
+          console.error('Erreur lors de la suppression:', error);
+          alert('❌ Erreur lors de la suppression du champion. Veuillez réessayer.');
+        });
+    }
   }
 
   // Getters pour faciliter l'accès aux contrôles dans le template
