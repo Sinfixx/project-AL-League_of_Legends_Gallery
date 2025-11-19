@@ -1,1 +1,333 @@
-<p>matchup works!</p>
+<div class="matchup-container">
+  <h1 class="title">CHAMPION MATCHUP ANALYZER</h1>
+
+  <!-- Sélection des champions -->
+  <div class="champion-selection">
+    <div class="champion-select">
+      <label for="hero1-select">Champion 1</label>
+      <select id="hero1-select" (change)="onHero1Select($event)">
+        <option value="">Sélectionner un champion</option>
+        <option *ngFor="let hero of heroes" [value]="hero.id">{{ hero.name }}</option>
+      </select>
+    </div>
+
+    <div class="vs-divider">VS</div>
+
+    <div class="champion-select">
+      <label for="hero2-select">Champion 2</label>
+      <select id="hero2-select" (change)="onHero2Select($event)">
+        <option value="">Sélectionner un champion</option>
+        <option *ngFor="let hero of heroes" [value]="hero.id">{{ hero.name }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Résultats du matchup -->
+  <div *ngIf="matchupResult && selectedHero1 && selectedHero2" class="matchup-results">
+    <div class="feur-title">
+      <h2 class="matchup-title">{{ selectedHero1.name }} vs {{ selectedHero2.name }}</h2>
+    </div>
+
+    <!-- Taux de victoire -->
+    <div class="winrate-section">
+      <div class="winrate-bar">
+        <div class="nameDisplay">
+          <div class="winrate-label left">
+            <span class="percentage">{{ matchupResult.hero1WinRate }}%</span>
+            <span class="champion-name">{{ selectedHero1.name }}</span>
+          </div>
+          <div class="winrate-label right">
+            <span class="champion-name">{{ selectedHero2.name }}</span>
+            <span class="percentage">{{ matchupResult.hero2WinRate }}%</span>
+          </div>
+        </div>
+
+        <div class="winrate-visual">
+          <div class="bar-hero1" [style.width.%]="matchupResult.hero1WinRate"></div>
+          <div class="bar-hero2" [style.width.%]="matchupResult.hero2WinRate"></div>
+        </div>
+      </div>
+      <h3>Statistiques de base</h3>
+
+      <div class="stat-row">
+        <span class="stat-label left">{{ matchupResult.hero1Stats.attaque }}</span>
+        <span class="stat-name">Attaque</span>
+        <span class="stat-label right">{{ matchupResult.hero2Stats.attaque }}</span>
+        <div class="stat-bar">
+          <div
+            class="bar-left"
+            [class.bar-dominated]="
+              isBarDominated(
+                matchupResult.hero1Stats.attaque,
+                matchupResult.hero2Stats.attaque,
+                true
+              )
+            "
+            [style.width.%]="
+              getStatBarPercentage(
+                matchupResult.hero1Stats.attaque,
+                matchupResult.hero2Stats.attaque,
+                true
+              )
+            "
+          ></div>
+          <div
+            class="bar-right"
+            [class.bar-dominated]="
+              isBarDominated(
+                matchupResult.hero1Stats.attaque,
+                matchupResult.hero2Stats.attaque,
+                false
+              )
+            "
+            [style.width.%]="
+              getStatBarPercentage(
+                matchupResult.hero1Stats.attaque,
+                matchupResult.hero2Stats.attaque,
+                false
+              )
+            "
+          ></div>
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <span class="stat-label left">{{ matchupResult.hero1Stats.esquive }}</span>
+        <span class="stat-name">Esquive</span>
+        <span class="stat-label right">{{ matchupResult.hero2Stats.esquive }}</span>
+        <div class="stat-bar">
+          <div
+            class="bar-left"
+            [class.bar-dominated]="
+              isBarDominated(
+                matchupResult.hero1Stats.esquive,
+                matchupResult.hero2Stats.esquive,
+                true
+              )
+            "
+            [style.width.%]="
+              getStatBarPercentage(
+                matchupResult.hero1Stats.esquive,
+                matchupResult.hero2Stats.esquive,
+                true
+              )
+            "
+          ></div>
+          <div
+            class="bar-right"
+            [class.bar-dominated]="
+              isBarDominated(
+                matchupResult.hero1Stats.esquive,
+                matchupResult.hero2Stats.esquive,
+                false
+              )
+            "
+            [style.width.%]="
+              getStatBarPercentage(
+                matchupResult.hero1Stats.esquive,
+                matchupResult.hero2Stats.esquive,
+                false
+              )
+            "
+          ></div>
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <span class="stat-label left">{{ matchupResult.hero1Stats.degats }}</span>
+        <span class="stat-name">Dégâts</span>
+        <span class="stat-label right">{{ matchupResult.hero2Stats.degats }}</span>
+        <div class="stat-bar">
+          <div
+            class="bar-left"
+            [class.bar-dominated]="
+              isBarDominated(matchupResult.hero1Stats.degats, matchupResult.hero2Stats.degats, true)
+            "
+            [style.width.%]="
+              getStatBarPercentage(
+                matchupResult.hero1Stats.degats,
+                matchupResult.hero2Stats.degats,
+                true
+              )
+            "
+          ></div>
+          <div
+            class="bar-right"
+            [class.bar-dominated]="
+              isBarDominated(
+                matchupResult.hero1Stats.degats,
+                matchupResult.hero2Stats.degats,
+                false
+              )
+            "
+            [style.width.%]="
+              getStatBarPercentage(
+                matchupResult.hero1Stats.degats,
+                matchupResult.hero2Stats.degats,
+                false
+              )
+            "
+          ></div>
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <span class="stat-label left">{{ matchupResult.hero1Stats.pv }}</span>
+        <span class="stat-name">PV</span>
+        <span class="stat-label right">{{ matchupResult.hero2Stats.pv }}</span>
+        <div class="stat-bar">
+          <div
+            class="bar-left"
+            [class.bar-dominated]="
+              isBarDominated(matchupResult.hero1Stats.pv, matchupResult.hero2Stats.pv, true)
+            "
+            [style.width.%]="
+              getStatBarPercentage(matchupResult.hero1Stats.pv, matchupResult.hero2Stats.pv, true)
+            "
+          ></div>
+          <div
+            class="bar-right"
+            [class.bar-dominated]="
+              isBarDominated(matchupResult.hero1Stats.pv, matchupResult.hero2Stats.pv, false)
+            "
+            [style.width.%]="
+              getStatBarPercentage(matchupResult.hero1Stats.pv, matchupResult.hero2Stats.pv, false)
+            "
+          ></div>
+        </div>
+      </div>
+      <h3>Métriques avancées</h3>
+
+      <div class="stat-row">
+        <span class="stat-label left">{{ matchupResult.hero1Metrics.survivability }}</span>
+        <span class="stat-name">Survivabilité</span>
+        <span class="stat-label right">{{ matchupResult.hero2Metrics.survivability }}</span>
+        <div class="stat-bar">
+          <div
+            class="bar-left"
+            [class.bar-dominated]="
+              isBarDominated(
+                matchupResult.hero1Metrics.survivability,
+                matchupResult.hero2Metrics.survivability,
+                true
+              )
+            "
+            [style.width.%]="
+              getStatBarPercentage(
+                matchupResult.hero1Metrics.survivability,
+                matchupResult.hero2Metrics.survivability,
+                true
+              )
+            "
+          ></div>
+          <div
+            class="bar-right"
+            [class.bar-dominated]="
+              isBarDominated(
+                matchupResult.hero1Metrics.survivability,
+                matchupResult.hero2Metrics.survivability,
+                false
+              )
+            "
+            [style.width.%]="
+              getStatBarPercentage(
+                matchupResult.hero1Metrics.survivability,
+                matchupResult.hero2Metrics.survivability,
+                false
+              )
+            "
+          ></div>
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <span class="stat-label left">{{ matchupResult.hero1Metrics.burstPotential }}</span>
+        <span class="stat-name">Potentiel de burst</span>
+        <span class="stat-label right">{{ matchupResult.hero2Metrics.burstPotential }}</span>
+        <div class="stat-bar">
+          <div
+            class="bar-left"
+            [class.bar-dominated]="
+              isBarDominated(
+                matchupResult.hero1Metrics.burstPotential,
+                matchupResult.hero2Metrics.burstPotential,
+                true
+              )
+            "
+            [style.width.%]="
+              getStatBarPercentage(
+                matchupResult.hero1Metrics.burstPotential,
+                matchupResult.hero2Metrics.burstPotential,
+                true
+              )
+            "
+          ></div>
+          <div
+            class="bar-right"
+            [class.bar-dominated]="
+              isBarDominated(
+                matchupResult.hero1Metrics.burstPotential,
+                matchupResult.hero2Metrics.burstPotential,
+                false
+              )
+            "
+            [style.width.%]="
+              getStatBarPercentage(
+                matchupResult.hero1Metrics.burstPotential,
+                matchupResult.hero2Metrics.burstPotential,
+                false
+              )
+            "
+          ></div>
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <span class="stat-label left">{{ matchupResult.hero1Metrics.efficiency }}</span>
+        <span class="stat-name">Efficacité</span>
+        <span class="stat-label right">{{ matchupResult.hero2Metrics.efficiency }}</span>
+        <div class="stat-bar">
+          <div
+            class="bar-left"
+            [class.bar-dominated]="
+              isBarDominated(
+                matchupResult.hero1Metrics.efficiency,
+                matchupResult.hero2Metrics.efficiency,
+                true
+              )
+            "
+            [style.width.%]="
+              getStatBarPercentage(
+                matchupResult.hero1Metrics.efficiency,
+                matchupResult.hero2Metrics.efficiency,
+                true
+              )
+            "
+          ></div>
+          <div
+            class="bar-right"
+            [class.bar-dominated]="
+              isBarDominated(
+                matchupResult.hero1Metrics.efficiency,
+                matchupResult.hero2Metrics.efficiency,
+                false
+              )
+            "
+            [style.width.%]="
+              getStatBarPercentage(
+                matchupResult.hero1Metrics.efficiency,
+                matchupResult.hero2Metrics.efficiency,
+                false
+              )
+            "
+          ></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message si aucun matchup sélectionné -->
+  <div *ngIf="!matchupResult" class="no-matchup">
+    <p>Sélectionnez deux champions pour analyser leur matchup</p>
+  </div>
+</div>

@@ -13,7 +13,10 @@
   </div>
 
   <form [formGroup]="heroForm" (ngSubmit)="onSubmit()" class="hero-form">
-    <div class="stats-section">
+    <div class="stats-section" [style.background-image]="getBackgroundStyle()">
+      <!-- Image invisible pour détecter les erreurs de chargement -->
+      <img [src]="backgroundUrl" (error)="onBackgroundError()" style="display: none" alt="" />
+
       <h3>Caractéristiques (Total: {{ getTotalPoints() }}/40)</h3>
 
       <div class="points-remaining">
@@ -268,6 +271,19 @@
         @if (hasError('name', 'required') || hasError('name', 'minlength')) {
         <div class="field-error">{{ getErrorMessage('name') }}</div>
         }
+      </div>
+
+      <!-- ID League of Legends -->
+      <div class="form-group">
+        <label for="hero-data">ID League of Legends (optionnel):</label>
+        <input
+          id="hero-data"
+          type="text"
+          formControlName="data"
+          placeholder="Ex: 893 pour Aurora"
+          maxlength="10"
+        />
+        <small class="help-text">ID du champion LoL pour afficher son icône</small>
       </div>
 
       <!-- Message d'erreur global -->

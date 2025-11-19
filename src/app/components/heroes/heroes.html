@@ -1,23 +1,46 @@
-<div style="margin-bottom: 20px">
-  <label for="sort-select">Trier par :</label>
-  <select id="sort-select" [(ngModel)]="sortBy" (change)="sortHeroes()">
-    <option value="id">ID</option>
-    <option value="name">Nom</option>
-    <option value="attaque">Attaque</option>
-    <option value="esquive">Esquive</option>
-    <option value="degats">Dégâts</option>
-    <option value="pv">PV</option>
-  </select>
-  <label for="order-select">Ordre :</label>
-  <select id="order-select" [(ngModel)]="sortOrder" (change)="sortHeroes()">
-    <option [ngValue]="true">Croissant</option>
-    <option [ngValue]="false">Décroissant</option>
-  </select>
+<div class="nav">
+  <div class="left">
+    <label for="sort-select">Trier par :</label>
+    <select id="sort-select" [(ngModel)]="sortBy" (change)="sortHeroes()">
+      <option value="id">ID</option>
+      <option value="name">Nom</option>
+      <option value="attaque">Attaque</option>
+      <option value="esquive">Esquive</option>
+      <option value="degats">Dégâts</option>
+      <option value="pv">PV</option>
+    </select>
+    <label for="order-select">Ordre :</label>
+    <select id="order-select" [(ngModel)]="sortOrder" (change)="sortHeroes()">
+      <option [ngValue]="true">Croissant</option>
+      <option [ngValue]="false">Décroissant</option>
+    </select>
+  </div>
+  <button routerLink="/heroes/new" class="add-hero-btn">
+    <span class="icon">+</span> Nouveau héros
+  </button>
 </div>
 <ul class="heroes">
   <li *ngFor="let hero of heroes">
     <a routerLink="/detail/{{ hero.id }}">
-      <span class="badge">{{ hero.id }}</span> {{ hero.name }}
+      <img
+        [src]="
+          hero.data
+            ? 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/' +
+              hero.data +
+              '.png'
+            : 'https://via.placeholder.com/80x80/1a1a1a/4a90e2?text=' + hero.name.charAt(0)
+        "
+        [alt]="hero.name"
+        class="hero-icon"
+        (error)="
+          $any($event.target).src =
+            'https://via.placeholder.com/80x80/1a1a1a/4a90e2?text=' + hero.name.charAt(0)
+        "
+      />
+      <div class="hero-info">
+        <span class="badge">{{ hero.id }}</span>
+        <span class="hero-name">{{ hero.name }}</span>
+      </div>
     </a>
   </li>
 </ul>

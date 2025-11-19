@@ -52,6 +52,7 @@ export class HeroService {
       degats: hero.degats,
       pv: hero.pv,
       weapon: hero.weapon || null,
+      data: hero.data || null,
     }).then(() => {
       this.messageService.add(`HeroService: added hero id=${hero.id}`);
     });
@@ -74,6 +75,7 @@ export class HeroService {
       degats: hero.degats,
       pv: hero.pv,
       weapon: hero.weapon || null,
+      data: hero.data || null,
     };
     updateDoc(heroDocument, newHeroJSON);
   }

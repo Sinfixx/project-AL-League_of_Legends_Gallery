@@ -1,6 +1,17 @@
 <h2>Top Heroes</h2>
 <div class="heroes-menu">
-  <a *ngFor="let hero of heroes" routerLink="/detail/{{ hero.id }}">
-    {{ hero.name }}
+  <a
+    *ngFor="let hero of heroes"
+    routerLink="/detail/{{ hero.id }}"
+    [style.background-image]="getHeroBackgroundStyle(hero.id)"
+  >
+    <span class="hero-name">{{ hero.name }}</span>
+    <!-- Image invisible pour détecter les erreurs de chargement -->
+    <img
+      [src]="heroBackgroundUrls.get(hero.id)"
+      (error)="onImageError(hero.id, hero.name)"
+      style="display: none"
+      alt=""
+    />
   </a>
 </div>

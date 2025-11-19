@@ -1,0 +1,323 @@
+/* Container principal */
+.matchup-container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 30px;
+  background-color: #2d2d2d;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border: 1px solid #404040;
+}
+
+/* Titre principal */
+.title {
+  text-align: center;
+  color: #e0e0e0;
+  font-size: 1.8em;
+  font-weight: bold;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Sélection des champions */
+.champion-selection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.champion-select {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.champion-select label {
+  color: #b0b0b0;
+  font-size: 0.9em;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.champion-select select {
+  background-color: #1a1a1a;
+  color: #e0e0e0;
+  border: 1px solid #404040;
+  border-radius: 6px;
+  padding: 12px 15px;
+  font-size: 1em;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.champion-select select:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+}
+
+.champion-select select:hover {
+  border-color: #4a90e2;
+}
+
+.vs-divider {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #4a90e2;
+  padding: 0 20px;
+  align-self: flex-end;
+  padding-bottom: 10px;
+}
+
+/* Résultats du matchup */
+.matchup-results {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.matchup-title {
+  text-align: center;
+  color: #e0e0e0;
+  font-size: 1.4em;
+  margin-bottom: 25px;
+  font-weight: 600;
+}
+
+/* Section taux de victoire */
+.nameDisplay {
+  display: flex;
+  justify-content: space-between;
+}
+
+.winrate-section {
+  margin-bottom: 35px;
+  padding: 20px;
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  border: 1px solid #404040;
+}
+
+.winrate-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.winrate-visual {
+  display: flex;
+  height: 40px;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.bar-hero1 {
+  background: linear-gradient(90deg, #4a90e2, #5ba3f5);
+  transition: width 0.5s ease;
+}
+
+.bar-hero2 {
+  background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+  transition: width 0.5s ease;
+}
+
+.winrate-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95em;
+}
+
+.winrate-label.left {
+  justify-content: flex-start;
+  gap: 15px;
+}
+
+.winrate-label.right {
+  justify-content: flex-end;
+  gap: 15px;
+}
+
+.winrate-label .percentage {
+  font-size: 1.6em;
+  font-weight: bold;
+  color: #e0e0e0;
+}
+
+.winrate-label.left .percentage {
+  color: #4a90e2;
+}
+
+.winrate-label.right .percentage {
+  color: #a78bfa;
+}
+
+.winrate-label .champion-name {
+  color: #b0b0b0;
+  font-weight: 500;
+}
+
+/* Section statistiques */
+.stats-section {
+  margin-bottom: 25px;
+  padding: 20px;
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  border: 1px solid #404040;
+}
+
+.stats-section h3 {
+  color: #e0e0e0;
+  font-size: 1.1em;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 60px 1fr 60px;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.stat-label {
+  font-weight: bold;
+  font-size: 1em;
+  text-align: center;
+}
+
+.stat-label.left {
+  color: #4a90e2;
+  text-align: left;
+}
+
+.stat-label.right {
+  color: #a78bfa;
+  text-align: right;
+}
+
+.stat-name {
+  color: #b0b0b0;
+  font-size: 0.85em;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  width: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.stat-bar {
+  display: flex;
+  height: 25px;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  grid-column: 1 / 4;
+}
+
+.bar-left {
+  background: linear-gradient(90deg, #4a90e2, #5ba3f5);
+  transition: width 0.5s ease, background 0.5s ease;
+}
+
+.bar-right {
+  background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+  transition: width 0.5s ease, background 0.5s ease;
+}
+
+/* Classe pour les barres dominées (affichées en noir) */
+.bar-dominated {
+  background: #000000 !important;
+  transition: width 0.5s ease, background 0.5s ease !important;
+}
+
+/* Message si aucun matchup */
+.no-matchup {
+  text-align: center;
+  padding: 60px 20px;
+  color: #888888;
+  font-size: 1.1em;
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .matchup-container {
+    margin: 10px;
+    padding: 20px;
+  }
+
+  .champion-selection {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .vs-divider {
+    align-self: center;
+    padding: 10px 0;
+  }
+
+  .title {
+    font-size: 1.4em;
+  }
+
+  .winrate-label .percentage {
+    font-size: 1.3em;
+  }
+
+  .stat-row {
+    grid-template-columns: 50px 1fr 50px;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .matchup-container {
+    padding: 15px;
+  }
+
+  .title {
+    font-size: 1.2em;
+  }
+
+  .winrate-label {
+    font-size: 0.85em;
+  }
+
+  .winrate-label .percentage {
+    font-size: 1.1em;
+  }
+
+  .stat-row {
+    grid-template-columns: 45px 1fr 45px;
+    gap: 8px;
+  }
+
+  .stat-label {
+    font-size: 0.9em;
+  }
+
+  .stat-name {
+    font-size: 0.75em;
+  }
+}

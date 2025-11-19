@@ -5,6 +5,8 @@ import { HeroDetail } from './components/hero-detail/hero-detail';
 import { Import } from './components/import/import';
 import { Weapons } from './components/weapons/weapons';
 import { WeaponDetail } from './components/weapon-detail/weapon-detail';
+import { Matchup } from './components/matchup/matchup';
+import { HeroNew } from './components/hero-new/hero-new';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -14,4 +16,6 @@ export const routes: Routes = [
   { path: 'import', component: Import },
   { path: 'weapons', component: Weapons },
   { path: 'weapon/:id', component: WeaponDetail },
+  { path: 'matchup', component: Matchup },
+  { path: 'heroes/new', component: HeroNew },
 ];

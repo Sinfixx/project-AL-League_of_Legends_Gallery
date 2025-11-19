@@ -45,7 +45,42 @@
   font-size: 1.1em;
   font-weight: 500;
   transition: all 0.3s ease;
-  min-height: 60px;
+  min-height: 80px;
+  gap: 15px;
+}
+
+/* Hero icon */
+.hero-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 2px solid #404040;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.heroes li:hover .hero-icon {
+  border-color: #4a90e2;
+  box-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+  transform: scale(1.05);
+}
+
+/* Hero info container */
+.hero-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Hero name */
+.hero-name {
+  flex: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .heroes a:hover {
@@ -78,6 +113,14 @@
 
 /* Hero name */
 .heroes a span:not(.badge) {
+  flex: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Hero name in new structure */
+.hero-name {
   flex: 1;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -135,7 +178,12 @@
   .heroes a {
     padding: 12px 15px;
     font-size: 1em;
-    min-height: 50px;
+    min-height: 70px;
+  }
+
+  .hero-icon {
+    width: 50px;
+    height: 50px;
   }
 
   .badge {
@@ -154,7 +202,12 @@
 
   .heroes a {
     padding: 10px 12px;
-    min-height: 45px;
+    min-height: 65px;
+  }
+
+  .hero-icon {
+    width: 45px;
+    height: 45px;
   }
 
   .badge {
@@ -206,4 +259,54 @@ select:focus {
 
 select:hover {
   border-color: #4a90e2;
+}
+
+/* Navigation bar styling */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  gap: 20px;
+}
+
+.nav .left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Add hero button styling */
+.add-hero-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #4a90e2, #357abd);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.4);
+}
+
+.add-hero-btn:hover {
+  background: linear-gradient(135deg, #5ba3f5, #4a90e2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.6);
+}
+
+.add-hero-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(74, 144, 226, 0.4);
+}
+
+.add-hero-btn .icon {
+  font-size: 1.3em;
+  font-weight: bold;
+  line-height: 1;
 }

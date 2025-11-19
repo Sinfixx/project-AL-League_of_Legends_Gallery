@@ -42,6 +42,9 @@ h2 {
   justify-content: center;
   padding: 25px 20px;
   background: linear-gradient(135deg, #1a1a1a, #242424);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   color: #e0e0e0;
   text-decoration: none;
   border-radius: 10px;
@@ -57,13 +60,37 @@ h2 {
   letter-spacing: 0.5px;
 }
 
+/* Dark overlay for readability */
+.heroes-menu a::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(26, 26, 26, 0.75), rgba(36, 36, 36, 0.75));
+  transition: background 0.3s ease;
+  z-index: 1;
+}
+
+/* Hero name with better visibility */
+.hero-name {
+  position: relative;
+  z-index: 2;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 0, 0, 0.7);
+  font-weight: 600;
+}
+
 /* Hover effect */
 .heroes-menu a:hover {
   color: #ffffff;
   border-color: #4a90e2;
   transform: translateY(-5px) scale(1.02);
   box-shadow: 0 8px 25px rgba(74, 144, 226, 0.4);
-  background: linear-gradient(135deg, #242424, #2d2d2d);
+}
+
+.heroes-menu a:hover::before {
+  background: linear-gradient(135deg, rgba(26, 26, 26, 0.5), rgba(36, 36, 36, 0.5));
 }
 
 /* Focus effect */
@@ -73,50 +100,21 @@ h2 {
   box-shadow: 0 0 15px rgba(74, 144, 226, 0.6);
 }
 
-/* Animated background effect */
-.heroes-menu a::before {
+/* Animated shimmer effect */
+.heroes-menu a::after {
   content: '';
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(74, 144, 226, 0.1), transparent);
+  background: linear-gradient(90deg, transparent, rgba(74, 144, 226, 0.2), transparent);
   transition: left 0.5s ease;
-}
-
-.heroes-menu a:hover::before {
-  left: 100%;
-}
-
-/* Hero number indicator */
-.heroes-menu a::after {
-  content: counter(hero-counter);
-  counter-increment: hero-counter;
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  width: 25px;
-  height: 25px;
-  background: linear-gradient(135deg, #4a90e2, #357abd);
-  color: #ffffff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8em;
-  font-weight: bold;
-  opacity: 0.7;
-  transition: opacity 0.3s ease;
+  z-index: 2;
 }
 
 .heroes-menu a:hover::after {
-  opacity: 1;
-}
-
-/* Reset counter */
-.heroes-menu {
-  counter-reset: hero-counter;
+  left: 100%;
 }
 
 /* Loading state */

@@ -1,0 +1,167 @@
+<div class="hero-new-container">
+  <h1 class="title">Créer un nouveau héros</h1>
+
+  <form class="hero-form" (ngSubmit)="onSubmit()">
+    <!-- Message d'erreur -->
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <!-- ID (modifiable) -->
+    <div class="form-group">
+      <label for="hero-id">ID *</label>
+      <input type="number" id="hero-id" [(ngModel)]="hero.id" name="id" min="1" required />
+      <small class="help-text">Choisissez un ID unique (Sinon le champion sera écrasé)</small>
+    </div>
+
+    <!-- Nom -->
+    <div class="form-group">
+      <label for="hero-name">Nom du héros *</label>
+      <input
+        type="text"
+        id="hero-name"
+        [(ngModel)]="hero.name"
+        name="name"
+        placeholder="Entrez le nom du héros"
+        required
+        maxlength="50"
+      />
+      <small class="help-text">2-50 caractères</small>
+    </div>
+
+    <!-- ID League of Legends -->
+    <div class="form-group">
+      <label for="hero-data">ID League of Legends (optionnel)</label>
+      <input
+        type="text"
+        id="hero-data"
+        [(ngModel)]="hero.data"
+        name="data"
+        placeholder="Ex: 893 pour Aurora"
+        maxlength="10"
+      />
+      <small class="help-text">ID du champion LoL pour afficher son icône (ex: 893)</small>
+    </div>
+
+    <!-- Stats de base -->
+    <div class="stats-section">
+      <div class="stats-header">
+        <h3>Statistiques</h3>
+        <div class="stats-total" [class.stats-invalid]="!isStatsTotalValid()">
+          Total : {{ getStatsTotal() }} / 40
+        </div>
+      </div>
+
+      <!-- Attaque -->
+      <div class="form-group">
+        <label for="hero-attaque">Attaque</label>
+        <div class="stat-input-group">
+          <input
+            type="range"
+            id="hero-attaque"
+            [(ngModel)]="hero.attaque"
+            name="attaque"
+            min="1"
+            max="40"
+            class="stat-slider"
+          />
+          <input
+            type="number"
+            [(ngModel)]="hero.attaque"
+            name="attaque-value"
+            min="1"
+            max="40"
+            class="stat-number"
+          />
+        </div>
+        <small class="help-text">Minimum : 1</small>
+      </div>
+
+      <!-- Esquive -->
+      <div class="form-group">
+        <label for="hero-esquive">Esquive</label>
+        <div class="stat-input-group">
+          <input
+            type="range"
+            id="hero-esquive"
+            [(ngModel)]="hero.esquive"
+            name="esquive"
+            min="1"
+            max="40"
+            class="stat-slider"
+          />
+          <input
+            type="number"
+            [(ngModel)]="hero.esquive"
+            name="esquive-value"
+            min="1"
+            max="40"
+            class="stat-number"
+          />
+        </div>
+        <small class="help-text">Minimum : 1</small>
+      </div>
+
+      <!-- Dégâts -->
+      <div class="form-group">
+        <label for="hero-degats">Dégâts</label>
+        <div class="stat-input-group">
+          <input
+            type="range"
+            id="hero-degats"
+            [(ngModel)]="hero.degats"
+            name="degats"
+            min="1"
+            max="40"
+            class="stat-slider"
+          />
+          <input
+            type="number"
+            [(ngModel)]="hero.degats"
+            name="degats-value"
+            min="1"
+            max="40"
+            class="stat-number"
+          />
+        </div>
+        <small class="help-text">Minimum : 1</small>
+      </div>
+
+      <!-- PV -->
+      <div class="form-group">
+        <label for="hero-pv">Points de Vie</label>
+        <div class="stat-input-group">
+          <input
+            type="range"
+            id="hero-pv"
+            [(ngModel)]="hero.pv"
+            name="pv"
+            min="1"
+            max="40"
+            class="stat-slider"
+          />
+          <input
+            type="number"
+            [(ngModel)]="hero.pv"
+            name="pv-value"
+            min="1"
+            max="40"
+            class="stat-number"
+          />
+        </div>
+        <small class="help-text">Minimum : 1</small>
+      </div>
+    </div>
+
+    <!-- Boutons d'action -->
+    <div class="form-actions">
+      <button type="button" class="btn-cancel" (click)="onCancel()" [disabled]="isSubmitting">
+        Annuler
+      </button>
+      <button type="submit" class="btn-submit" [disabled]="isSubmitting">
+        <span *ngIf="!isSubmitting">Créer le héros</span>
+        <span *ngIf="isSubmitting">Création en cours...</span>
+      </button>
+    </div>
+  </form>
+</div>

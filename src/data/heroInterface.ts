@@ -6,4 +6,5 @@ export interface HeroInterface {
   degats: number;
   pv: number;
   weapon?: string;
+  data?: string; // ID League of Legends pour l'icône
 }

@@ -36,6 +36,8 @@ export class HeroDetail implements OnInit, OnDestroy {
   finalStats?: HeroInterface;
   private originalHero?: HeroInterface;
   private formSubscription?: Subscription;
+  backgroundUrl: string = '';
+  private useSuffix: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -62,6 +64,7 @@ export class HeroDetail implements OnInit, OnDestroy {
       {
         id: [{ value: 0, disabled: true }],
         name: ['', [Validators.required, Validators.minLength(2)]],
+        data: [''], // ID League of Legends
         attaque: [1, [Validators.required, Validators.min(1), Validators.max(40)]],
         esquive: [1, [Validators.required, Validators.min(1), Validators.max(40)]],
         degats: [1, [Validators.required, Validators.min(1), Validators.max(40)]],
@@ -94,6 +97,9 @@ export class HeroDetail implements OnInit, OnDestroy {
           this.selectedWeapon = this.weapons.find((w) => w.id.toString() === hero.weapon);
           this.heroForm.patchValue({ weapon: hero.weapon });
         }
+
+        // Initialiser l'URL de fond
+        this.backgroundUrl = this.getBackgroundUrl(hero.name);
 
         this.updateFinalStats();
       }
@@ -258,5 +264,27 @@ export class HeroDetail implements OnInit, OnDestroy {
     if (control.hasError('minlength')) return 'Le nom doit contenir au moins 2 caractères';
 
     return '';
+  }
+
+  getBackgroundUrl(heroName: string): string {
+    const nameLower = heroName.toLowerCase();
+    const basePath = `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/assets/characters/${nameLower}/skins/base/images/${nameLower}_splash_uncentered_0`;
+
+    if (this.useSuffix) {
+      return `${basePath}.${nameLower}.jpg`;
+    } else {
+      return `${basePath}.jpg`;
+    }
+  }
+
+  onBackgroundError(): void {
+    if (!this.useSuffix && this.hero) {
+      this.useSuffix = true;
+      this.backgroundUrl = this.getBackgroundUrl(this.hero.name);
+    }
+  }
+
+  getBackgroundStyle(): string {
+    return this.backgroundUrl ? `url('${this.backgroundUrl}')` : 'none';
   }
 }
