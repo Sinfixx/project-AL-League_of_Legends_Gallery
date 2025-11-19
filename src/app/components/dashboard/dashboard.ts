@@ -23,7 +23,7 @@ export class Dashboard implements OnInit {
 
   getHeroes(): void {
     this.heroService.getHeroes().subscribe((heroes) => {
-      this.heroes = heroes.slice(0, 3);
+      this.heroes = heroes.slice(0, 6);
       // Initialiser les URLs pour chaque héros
       this.heroes.forEach((hero) => {
         this.heroBackgroundUrls.set(hero.id, this.getBackgroundUrl(hero.name, false));
@@ -32,7 +32,7 @@ export class Dashboard implements OnInit {
   }
 
   getBackgroundUrl(heroName: string, withSuffix: boolean): string {
-    const nameLower = heroName.toLowerCase();
+    const nameLower = heroName.toLowerCase().replaceAll("'", '').replaceAll("'", '');
     const basePath = `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/assets/characters/${nameLower}/skins/base/images/${nameLower}_splash_centered_0`;
 
     if (withSuffix) {

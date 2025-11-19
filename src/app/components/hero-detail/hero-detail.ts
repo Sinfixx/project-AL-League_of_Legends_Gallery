@@ -267,7 +267,7 @@ export class HeroDetail implements OnInit, OnDestroy {
   }
 
   getBackgroundUrl(heroName: string): string {
-    const nameLower = heroName.toLowerCase();
+    const nameLower = heroName.toLowerCase().replaceAll("'", '').replaceAll("'", '');
     const basePath = `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/assets/characters/${nameLower}/skins/base/images/${nameLower}_splash_uncentered_0`;
 
     if (this.useSuffix) {
