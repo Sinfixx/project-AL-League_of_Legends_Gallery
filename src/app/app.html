@@ -1,10 +1,18 @@
-<h1>{{ title }}</h1>
-<nav>
-  <a routerLink="/dashboard">Hall des légendes</a>
-  <a routerLink="/heroes">Champions</a>
-  <a routerLink="/weapons">Armes</a>
-  <a routerLink="/matchup">Matchups</a>
-  <!-- <a routerLink="/import">Test</a> -->
-</nav>
+<div *ngIf="authService.isAuthenticated()">
+  <div class="header">
+    <h1>{{ title }}</h1>
+    <div class="user-info">
+      <span class="username">{{ authService.getUsername() }}</span>
+      <span class="roles">({{ authService.getRoles().join(', ') }})</span>
+      <button class="logout-btn" (click)="logout()">Déconnexion</button>
+    </div>
+  </div>
+  <nav>
+    <a routerLink="/dashboard">Hall des légendes</a>
+    <a routerLink="/heroes">Champions</a>
+    <a routerLink="/weapons">Armes</a>
+    <a routerLink="/matchup">Matchups</a>
+  </nav>
+</div>
 <router-outlet></router-outlet>
 <app-messages></app-messages>

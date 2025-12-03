@@ -8,16 +8,23 @@ import { WeaponDetail } from './components/weapon-detail/weapon-detail';
 import { Matchup } from './components/matchup/matchup';
 import { HeroNew } from './components/hero-new/hero-new';
 import { WeaponNew } from './components/weapon-new/weapon-new';
+import { Login } from './components/login/login';
+import { Sign } from './components/sign/sign';
+import { authGuard } from './guards/auth.guard';
+import { Forbidden } from './components/forbidden/forbidden';
 
 export const routes: Routes = [
+  { path: 'login', component: Login },
+  { path: 'sign', component: Sign },
+  { path: 'forbidden', component: Forbidden },
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
-  { path: 'dashboard', component: Dashboard },
-  { path: 'heroes', component: Heroes },
-  { path: 'detail/:id', component: HeroDetail },
-  { path: 'import', component: Import },
-  { path: 'weapons', component: Weapons },
-  { path: 'weapon/:id', component: WeaponDetail },
-  { path: 'weapons/new', component: WeaponNew },
-  { path: 'matchup', component: Matchup },
-  { path: 'heroes/new', component: HeroNew },
+  { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },
+  { path: 'heroes', component: Heroes, canActivate: [authGuard] },
+  { path: 'detail/:id', component: HeroDetail, canActivate: [authGuard] },
+  { path: 'import', component: Import, canActivate: [authGuard] },
+  { path: 'weapons', component: Weapons, canActivate: [authGuard] },
+  { path: 'weapon/:id', component: WeaponDetail, canActivate: [authGuard] },
+  { path: 'weapons/new', component: WeaponNew, canActivate: [authGuard] },
+  { path: 'matchup', component: Matchup, canActivate: [authGuard] },
+  { path: 'heroes/new', component: HeroNew, canActivate: [authGuard] },
 ];
